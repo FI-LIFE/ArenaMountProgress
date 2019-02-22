@@ -1,0 +1,7 @@
+## Interface: 80000
+## Title: ArenaMountsProgress
+## Version: 1.0.1
+## Notes: Print your achievement progress "Sinister Combatant"
+## Author: Evgeniy "FI-LIFE" Naumenko
+
+ArenaMountsProgress.lua
