@@ -44,7 +44,7 @@ local function eventHandler(self, event, prefix, message)
                 else
                     FormatedMsg(UnitName("player"), quantity, reqQuantity);
                 end
-            endgi
+            end
 
             lastQuantity = quantity;
         end
