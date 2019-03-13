@@ -1,7 +1,8 @@
 ## Interface: 80100
 ## Title: ArenaMountsProgress
-## Version: 1.1.1
+## Version: 1.2.0
 ## Notes: Print your achievement progress "Sinister Combatant"
 ## Author: Evgeniy "FI-LIFE" Naumenko
 
+Localization\localization.xml
 ArenaMountsProgress.lua
