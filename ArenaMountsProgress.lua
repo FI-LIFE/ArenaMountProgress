@@ -82,8 +82,6 @@ frame:SetScript("OnEvent", eventHandler);
 
 SLASH_AMP1 = "/amp"
 SlashCmdList["AMP"] = function(msg)
-    local quantity, reqQuantity = getMountProgress();
-
     if msg == 'all' then
         for i, Season in pairs(AchievementIds) do
             local left2x2, left3x3 = 0, 0;
@@ -108,6 +106,8 @@ SlashCmdList["AMP"] = function(msg)
             end
         end
     else
+        local quantity, reqQuantity = getMountProgress();
+
         if IsInGroup() then
             C_ChatInfo.SendAddonMessage("NEUGEN_AMP", format("%s|%d|%d", UnitName("player"), quantity, reqQuantity), "PARTY")
         else
