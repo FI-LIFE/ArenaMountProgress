@@ -31,7 +31,7 @@ local function getMountProgress()
 end
 
 local function FormatedMsg(player, quantity, reqQuantity)
-    print(format("%s: %d/%d (%s%%) 2v2: %d %s 3v3: %d", player, quantity, reqQuantity, math.ceil(quantity/reqQuantity*10000)/100,
+    print(format("%s: %s%% | %s 2v2: %d %s 3v3: %d", player, math.ceil(quantity/reqQuantity*10000)/100, L["LEFT"],
         math.ceil((reqQuantity - quantity)/10), L["OR"], math.ceil((reqQuantity - quantity)/30)));
 end
 
