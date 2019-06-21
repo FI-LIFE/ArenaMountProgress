@@ -1,11 +1,15 @@
+local Seasons = {26, 27, 28};
+
 local AchievementIds = {
     [26] = {13136},
-    [27] = {13227, 13453, 13521, 13522, 13523, 13524, 13525, 13526, 13527, 13528, 13529}
+    [27] = {13227, 13453, 13521, 13522, 13523, 13524, 13525, 13526, 13527, 13528, 13529},
+    [28] = {13636, 13812, 13813, 13814, 13815, 13816, 13817, 13818, 13819, 13820, 13821}
 };
 
 local AchievementIds_Alliance = {
     [26] = {13137},
-    [27] = {13228, 13452, 13530, 13531, 13532, 13533, 13534, 13535, 13536, 13537, 13538}
+    [27] = {13228, 13452, 13530, 13531, 13532, 13533, 13534, 13535, 13536, 13537, 13538},
+    [28] = {13637, 13822, 13823, 13824, 13825, 13826, 13827, 13828, 13829, 13830, 13831}
 };
 
 local currentArenaSeason = 0;
@@ -83,10 +87,11 @@ frame:SetScript("OnEvent", eventHandler);
 SLASH_AMP1 = "/amp"
 SlashCmdList["AMP"] = function(msg)
     if msg == 'all' then
-        for i, Season in pairs(AchievementIds) do
+        for _, s in pairs(Seasons) do
             local left2x2, left3x3 = 0, 0;
+            local Season = AchievementIds[s];
 
-            print(format(L["SEASON"], i));
+            print(format(L["SEASON"], s));
 
             for i2, AchievementId in pairs(Season) do
                 if GetAchievementNumCriteria(AchievementId) > 0 then
@@ -94,14 +99,14 @@ SlashCmdList["AMP"] = function(msg)
                     local criteriaString, criteriaType, completed, quantity, reqQuantity = GetAchievementCriteriaInfo(AchievementId, 1);
 
                     print(format("  %s: %d/%d (%s%%) 2v2: %d %s 3v3: %d", name, quantity, reqQuantity, math.ceil(quantity/reqQuantity*10000)/100,
-                        math.ceil((reqQuantity - quantity)/10), L["OR"], math.ceil((reqQuantity - quantity)/30)));
+                            math.ceil((reqQuantity - quantity)/10), L["OR"], math.ceil((reqQuantity - quantity)/30)));
 
                     left2x2 = left2x2 + math.ceil((reqQuantity - quantity)/10);
                     left3x3 = left3x3 + math.ceil((reqQuantity - quantity)/30);
                 end
             end
 
-            if i == currentArenaSeason then
+            if s == currentArenaSeason then
                 print (format("%s: 2v2: %d %s 3v3: %d", L["LEFT"], left2x2, L["OR"], left3x3));
             end
         end

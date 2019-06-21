@@ -1,7 +1,7 @@
-## Interface: 80100
-## Title: ArenaMountsProgress
-## Version: 1.2.1
-## Notes: Print your achievement progress "Sinister Combatant"
+## Interface: 80200
+## Title: Arena Mounts Progress
+## Version: 1.3.0
+## Notes: Print your achievement progress "Notorious Combatant"
 ## Author: Evgeniy "FI-LIFE" Naumenko
 
 Localization\localization.xml
