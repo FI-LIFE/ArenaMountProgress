@@ -1,40 +1,54 @@
+local lastQuantity;
+local Faction;
+local currentArenaSeason;
+local AddonPrefix = "NEUGEN_AMP";
 local AchievementIds = {
-    [26] = {13136},
-    [27] = {13227, 13453, 13521, 13522, 13523, 13524, 13525, 13526, 13527, 13528, 13529}
+    ["Horde"] = 14612,
+    ["Alliance"] = 14611,
 };
+local Saddles = {
+    ["Horde"] = {
+        14611, 13521, 13522, 13523, 13524, 13525, 13526, 13527, 13528, 13529, 13812, 13813, 13814, 13815,
+        13816, 13817, 13818, 13819, 13820, 13821, 13945, 13946, 13947, 13948, 13949, 13950, 13951, 13952, 13953,
+        13954, 14561, 14563, 14564, 14565, 14566
+    },
+    ["Alliance"] = {
+        14612, 13530, 13531, 13532, 13533, 13534, 13535, 13536, 13537, 13538, 13822, 13823, 13824, 13825,
+        13826, 13827, 13828, 13829, 13830, 13831, 13933, 13934, 13935, 13936, 13937, 13938, 13939, 13940, 13941,
+        13942, 14555, 14557, 14558, 14559, 14560
+    },
+}
 
-local AchievementIds_Alliance = {
-    [26] = {13137},
-    [27] = {13228, 13452, 13530, 13531, 13532, 13533, 13534, 13535, 13536, 13537, 13538}
-};
-
-local currentArenaSeason = 0;
-
-local lastQuantity = -1;
+local function FormatedMsg(player, quantity, reqQuantity)
+    print(format("%s: %s%% | %s 2v2: %d %s 3v3: %d", player, math.ceil(quantity / reqQuantity * 10000) / 100, L["LEFT"],
+        math.ceil((reqQuantity - quantity) / 10), L["OR"], math.ceil((reqQuantity - quantity) / 30)));
+end
 
 local function getMountProgress()
-    if currentArenaSeason == 0 then
-        return false;
+    if Faction == null or currentArenaSeason == null then
+        return null, null, null;
     end
 
-    for i, AchievementId in pairs(AchievementIds[currentArenaSeason]) do
+    if AchievementIds[Faction] and AchievementIds[Faction] and GetAchievementNumCriteria(AchievementIds[Faction]) > 0 then
+        local _, _, completed, quantity, reqQuantity = GetAchievementCriteriaInfo(AchievementIds[Faction], 1);
+
+        if completed ~= true then
+            return quantity, reqQuantity, false;
+        end
+    end
+
+    for i, AchievementId in pairs(Saddles[Faction]) do
         if GetAchievementNumCriteria(AchievementId) > 0 then
-            local criteriaString, criteriaType, completed, quantity, reqQuantity = GetAchievementCriteriaInfo(AchievementId, 1);
+            local _, _, completed, quantity, reqQuantity = GetAchievementCriteriaInfo(AchievementId, 1);
 
             if completed ~= true then
-                return quantity, reqQuantity;
+                return quantity, reqQuantity, true;
             end
         end
     end
 
-    return false;
+    return null, null, null;
 end
-
-local function FormatedMsg(player, quantity, reqQuantity)
-    print(format("%s: %s%% | %s 2v2: %d %s 3v3: %d", player, math.ceil(quantity/reqQuantity*10000)/100, L["LEFT"],
-        math.ceil((reqQuantity - quantity)/10), L["OR"], math.ceil((reqQuantity - quantity)/30)));
-end
-
 
 local frame = CreateFrame("FRAME");
 
@@ -60,7 +74,7 @@ local function eventHandler(self, event, prefix, message)
     end
 
     if event == "CHAT_MSG_ADDON" then
-        if prefix == "NEUGEN_AMP" then
+        if prefix == AddonPrefix then
             local playerName, playerQuantity, playerReqQuantity = strsplit("|", message, 4)
 
             FormatedMsg(playerName, tonumber(playerQuantity), tonumber(playerReqQuantity));
@@ -68,50 +82,21 @@ local function eventHandler(self, event, prefix, message)
     end
 
     if event == "PLAYER_ENTERING_WORLD" then
-        local faction = UnitFactionGroup("player");
+        Faction = UnitFactionGroup("player");
         currentArenaSeason = GetCurrentArenaSeason();
-
-        if faction ~= "Horde" then
-            AchievementIds = AchievementIds_Alliance;
-        end
     end
 end
 
-C_ChatInfo.RegisterAddonMessagePrefix("NEUGEN_AMP");
+C_ChatInfo.RegisterAddonMessagePrefix(AddonPrefix);
 frame:SetScript("OnEvent", eventHandler);
 
 SLASH_AMP1 = "/amp"
 SlashCmdList["AMP"] = function(msg)
-    if msg == 'all' then
-        for i, Season in pairs(AchievementIds) do
-            local left2x2, left3x3 = 0, 0;
+    local quantity, reqQuantity = getMountProgress();
 
-            print(format(L["SEASON"], i));
-
-            for i2, AchievementId in pairs(Season) do
-                if GetAchievementNumCriteria(AchievementId) > 0 then
-                    local id, name = GetAchievementInfo(AchievementId);
-                    local criteriaString, criteriaType, completed, quantity, reqQuantity = GetAchievementCriteriaInfo(AchievementId, 1);
-
-                    print(format("  %s: %d/%d (%s%%) 2v2: %d %s 3v3: %d", name, quantity, reqQuantity, math.ceil(quantity/reqQuantity*10000)/100,
-                        math.ceil((reqQuantity - quantity)/10), L["OR"], math.ceil((reqQuantity - quantity)/30)));
-
-                    left2x2 = left2x2 + math.ceil((reqQuantity - quantity)/10);
-                    left3x3 = left3x3 + math.ceil((reqQuantity - quantity)/30);
-                end
-            end
-
-            if i == currentArenaSeason then
-                print (format("%s: 2v2: %d %s 3v3: %d", L["LEFT"], left2x2, L["OR"], left3x3));
-            end
-        end
+    if IsInGroup() then
+        C_ChatInfo.SendAddonMessage(AddonPrefix, format("%s|%d|%d", UnitName("player"), quantity, reqQuantity), "PARTY")
     else
-        local quantity, reqQuantity = getMountProgress();
-
-        if IsInGroup() then
-            C_ChatInfo.SendAddonMessage("NEUGEN_AMP", format("%s|%d|%d", UnitName("player"), quantity, reqQuantity), "PARTY")
-        else
-            FormatedMsg(UnitName("player"), quantity, reqQuantity);
-        end
+        FormatedMsg(UnitName("player"), quantity, reqQuantity);
     end
 end

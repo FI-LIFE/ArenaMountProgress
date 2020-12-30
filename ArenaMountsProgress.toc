@@ -1,6 +1,6 @@
-## Interface: 80100
-## Title: ArenaMountsProgress
-## Version: 1.2.1
+## Interface: 90002
+## Title: Arena Mounts Progress
+## Version: 2.0.0
 ## Notes: Print your achievement progress "Sinister Combatant"
 ## Author: Evgeniy "FI-LIFE" Naumenko
 
