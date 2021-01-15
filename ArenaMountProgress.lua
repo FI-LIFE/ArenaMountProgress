@@ -25,8 +25,8 @@ local function FormatedMsg(player, quantity, reqQuantity)
 end
 
 local function getMountProgress()
-    if Faction == null or currentArenaSeason == null then
-        return null, null, null;
+    if Faction == nil or currentArenaSeason == nil then
+        return nil, nil, nil;
     end
 
     if AchievementIds[Faction] and AchievementIds[Faction] and GetAchievementNumCriteria(AchievementIds[Faction]) > 0 then
@@ -47,7 +47,7 @@ local function getMountProgress()
         end
     end
 
-    return null, null, null;
+    return nil, nil, nil;
 end
 
 local frame = CreateFrame("FRAME");
@@ -61,7 +61,7 @@ local function eventHandler(self, event, prefix, message)
         local quantity, reqQuantity = getMountProgress();
 
         if (quantity ~= false and quantity ~= lastQuantity) then
-            if lastQuantity ~= null then
+            if lastQuantity ~= nil then
                 if IsInGroup() then
                     C_ChatInfo.SendAddonMessage("NEUGEN_AMP", format("%s|%d|%d", UnitName("player"), quantity, reqQuantity), "PARTY")
                 else
