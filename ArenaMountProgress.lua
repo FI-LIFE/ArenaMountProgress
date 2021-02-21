@@ -69,7 +69,7 @@ local function eventHandler(self, event, prefix, message, type, sender)
                 FormatedMsg(playerName, quantity, reqQuantity)
 
                 if IsInGroup() then
-                    C_ChatInfo.SendAddonMessage(AddonPrefix, format("%d|%s|%d|%d", COMMAND_MYPROGRESS, playerName, quantity, reqQuantity), 'GROUP')
+                    C_ChatInfo.SendAddonMessage(AddonPrefix, format("%s|%s|%d|%d", COMMAND_MYPROGRESS, playerName, quantity, reqQuantity), 'PARTY')
                 end
             end
 
@@ -87,7 +87,7 @@ local function eventHandler(self, event, prefix, message, type, sender)
                 local quantity, reqQuantity = getMountProgress()
 
                 if reqQuantity then
-                    C_ChatInfo.SendAddonMessage(AddonPrefix, format("%d|%s|%d|%d", COMMAND_MYPROGRESS, playerName, quantity, reqQuantity), 'WHISPER', sender)
+                    C_ChatInfo.SendAddonMessage(AddonPrefix, format("%s|%s|%d|%d", COMMAND_MYPROGRESS, playerName, quantity, reqQuantity), 'WHISPER', sender)
                 end
             elseif command == COMMAND_MYPROGRESS then
                 FormatedMsg(targetName, targetQuantity, targetReqQuantity)
@@ -98,6 +98,7 @@ local function eventHandler(self, event, prefix, message, type, sender)
     if event == "PLAYER_ENTERING_WORLD" then
         faction = UnitFactionGroup("player")
         currentArenaSeason = GetCurrentArenaSeason()
+		playerName, playerRealm = UnitFullName("player")
     end
 end
 
