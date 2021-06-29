@@ -4,18 +4,89 @@ local currentArenaSeason
 local AddonPrefix = "AMP"
 local COMMAND_TALKME = "0";
 local COMMAND_MYPROGRESS = "1";
+local Seasons = {
+	{
+		["name"] = "Battle for Azeroth",
+		["seasons"] = {
+			{
+				["name"] = 1,
+				["id"] = 26,
+				["Horde"] = 163124,
+				["Alliance"] = 163123
+			},
+			{
+				["name"] = 2,
+				["id"] = 27,
+				["Horde"] = 165020,
+				["Alliance"] = 165019
+			},
+			{
+				["name"] = 3,
+				["id"] = 28,
+				["Horde"] = 163121,
+				["Alliance"] = 163122
+			},
+			{
+				["name"] = 4,
+				["id"] = 29,
+				["Horde"] = 173713,
+				["Alliance"] = 173714
+			}
+		}
+	},
+	{
+		["name"] = "Shadowlands",
+		["seasons"] = {
+			{
+				["name"] = 1,
+				["id"] = 30,
+				["Horde"] = 184013,
+				["Alliance"] = 184014
+			},
+			{
+				["name"] = 2,
+				["id"] = 31,
+				["Horde"] = 186179,
+				["Alliance"] = 186178
+			}
+		}
+	}
+}
+
 local AchievementIds = {
-    ["Horde"] = 14612,
-    ["Alliance"] = 14611,
+	[26] = { -- BFA 1 Season
+	    ["Horde"] = 13136,
+		["Alliance"] = 13137
+	},
+	[27] = { -- BFA 2 Season
+	    ["Horde"] = 13227,
+		["Alliance"] = 13228
+	},
+	[28] = { -- BFA 3 Season
+	    ["Horde"] = 13636,
+		["Alliance"] = 13637
+	},
+	[29] = { -- BFA 4 Season
+	    ["Horde"] = 13944,
+		["Alliance"] = 13943
+	},
+	[30] = { -- ShL 1 Season
+	    ["Horde"] = 14611,
+		["Alliance"] = 14612
+	},
+	[31] = { -- ShL 2 Season
+	    ["Horde"] = 14966,
+		["Alliance"] = 14967
+	}
 }
 local Saddles = {
     ["Horde"] = {
-        14611, 13521, 13522, 13523, 13524, 13525, 13526, 13527, 13528, 13529, 13812, 13813, 13814, 13815,
+        13453, 13521, 13522, 13523, 13524, 13525, 13526, 13527, 13528, 13529, 13812, 13813, 13814, 13815,
         13816, 13817, 13818, 13819, 13820, 13821, 13945, 13946, 13947, 13948, 13949, 13950, 13951, 13952,
         13953, 13954, 14561, 14563, 14564, 14565, 14566
     },
     ["Alliance"] = {
-        14612, 13530, 13531, 13532, 13533, 13534, 13535, 13536, 13537, 13538, 13822, 13823, 13824, 13825,
+        13452, 13530, 13531, 13532, 13533, 13534, 13535, 13536, 13537, 13538, 13822, 13823, 13824, 13825,
         13826, 13827, 13828, 13829, 13830, 13831, 13933, 13934, 13935, 13936, 13937, 13938, 13939, 13940,
         13941, 13942, 14555, 14557, 14558, 14559, 14560
     },
@@ -28,12 +99,13 @@ local function FormatedMsg(player, quantity, reqQuantity)
 end
 
 local function getMountProgress()
-    if faction == nil or currentArenaSeason == nil then
+    if faction == nil then
         return nil, nil, nil
     end
 
-    if AchievementIds[faction] and GetAchievementNumCriteria(AchievementIds[faction]) > 0 then
-        local _, _, completed, quantity, reqQuantity = GetAchievementCriteriaInfo(AchievementIds[faction], 1)
+		
+    if AchievementIds[currentArenaSeason] ~= nil and GetAchievementNumCriteria(AchievementIds[currentArenaSeason][faction]) > 0 then
+        local _, _, completed, quantity, reqQuantity = GetAchievementCriteriaInfo(AchievementIds[currentArenaSeason][faction], 1)
 
         if completed ~= true then
             return quantity, reqQuantity, false
@@ -107,11 +179,35 @@ frame:SetScript("OnEvent", eventHandler)
 
 SLASH_AMP1 = "/amp"
 SlashCmdList["AMP"] = function(msg)
-    local quantity, reqQuantity = getMountProgress()
+	if msg == "all" or currentArenaSeason == nil then
+		for i, season in pairs(Seasons) do
+			print(season["name"])
 
-    FormatedMsg(playerName, quantity, reqQuantity)
+			for i, seasonId in pairs(season["seasons"]) do
+				local id = GetAchievementInfo(AchievementIds[seasonId["id"]][faction])
+				if id then
+					local _, _, completed, quantity, reqQuantity = GetAchievementCriteriaInfo(AchievementIds[seasonId["id"]][faction], 1)
+					local itemLink
+		
+					if seasonId[faction] then
+						_, itemLink = GetItemInfo(seasonId[faction]);
+					end
+					
+					if seasonId[faction] and itemLink then
+						print(format("  %s - %d%% %s", format(L["SEASON"], seasonId["name"]) , math.ceil(quantity / reqQuantity * 10000) / 100, itemLink ))
+					else 
+						print(format("  %s - %d%%", format(L["SEASON"], seasonId["name"]) , math.ceil(quantity / reqQuantity * 10000) / 100 ))
+					end
+				end
+			end
+		end
+	else 
+		local quantity, reqQuantity = getMountProgress()
+		
+		FormatedMsg(playerName, quantity, reqQuantity)
 
-    if IsInGroup() then
-        C_ChatInfo.SendAddonMessage(AddonPrefix, COMMAND_TALKME, "PARTY")
-    end
+		if IsInGroup() then
+			C_ChatInfo.SendAddonMessage(AddonPrefix, COMMAND_TALKME, "PARTY")
+		end
+	end
 end
