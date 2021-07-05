@@ -11,26 +11,26 @@ local Seasons = {
 			{
 				["name"] = 1,
 				["id"] = 26,
-				["Horde"] = 163124,
-				["Alliance"] = 163123
+				["Horde"] = "\124cffa335ee\124Hitem:163124::::::::60:::::\124h[Vicious War Clefthoof]\124h\124r",
+				["Alliance"] = "\124cffa335ee\124Hitem:163123::::::::60:::::\124h[Vicious War Riverbeast]\124h\124r"
 			},
 			{
 				["name"] = 2,
 				["id"] = 27,
-				["Horde"] = 165020,
-				["Alliance"] = 165019
+				["Horde"] = "\124cffa335ee\124Hitem:165020::::::::60:::::\124h[Vicious Black Bonesteed]\124h\124r",
+				["Alliance"] = "\124cffa335ee\124Hitem:165019::::::::60:::::\124h[Vicious Black Warsaber]\124h\124r"
 			},
 			{
 				["name"] = 3,
 				["id"] = 28,
-				["Horde"] = 163121,
-				["Alliance"] = 163122
+				["Horde"] = "\124cffa335ee\124Hitem:163121::::::::60:::::\124h[Vicious War Basilisk]\124h\124r",
+				["Alliance"] = "\124cffa335ee\124Hitem:163122::::::::60:::::\124h[Vicious War Basilisk]\124h\124r"
 			},
 			{
 				["name"] = 4,
 				["id"] = 29,
-				["Horde"] = 173713,
-				["Alliance"] = 173714
+				["Horde"] = "\124cffa335ee\124Hitem:173713::::::::60:::::\124h[Vicious White Bonesteed]\124h\124r",
+				["Alliance"] = "\124cffa335ee\124Hitem:173714::::::::60:::::\124h[Vicious White Warsaber]\124h\124r"
 			}
 		}
 	},
@@ -40,14 +40,14 @@ local Seasons = {
 			{
 				["name"] = 1,
 				["id"] = 30,
-				["Horde"] = 184013,
-				["Alliance"] = 184014
+				["Horde"] = "\124cffa335ee\124Hitem:184013::::::::60:::::\124h[Vicious War Spider]\124h\124r",
+				["Alliance"] = "\124cffa335ee\124Hitem:184014::::::::60:::::\124h[Vicious War Spider]\124h\124r"
 			},
 			{
 				["name"] = 2,
 				["id"] = 31,
-				["Horde"] = 186179,
-				["Alliance"] = 186178
+				["Horde"] = "\124cffa335ee\124Hitem:186179::::::::60:::::\124h[Vicious War Gorm]\124h\124r",
+				["Alliance"] = "\124cffa335ee\124Hitem:186178::::::::60:::::\124h[Vicious War Gorm]\124h\124r"
 			}
 		}
 	}
@@ -187,17 +187,8 @@ SlashCmdList["AMP"] = function(msg)
 				local id = GetAchievementInfo(AchievementIds[seasonId["id"]][faction])
 				if id then
 					local _, _, completed, quantity, reqQuantity = GetAchievementCriteriaInfo(AchievementIds[seasonId["id"]][faction], 1)
-					local itemLink
-		
-					if seasonId[faction] then
-						_, itemLink = GetItemInfo(seasonId[faction]);
-					end
 					
-					if seasonId[faction] and itemLink then
-						print(format("  %s - %d%% %s", format(L["SEASON"], seasonId["name"]) , math.ceil(quantity / reqQuantity * 10000) / 100, itemLink ))
-					else 
-						print(format("  %s - %d%%", format(L["SEASON"], seasonId["name"]) , math.ceil(quantity / reqQuantity * 10000) / 100 ))
-					end
+					print(format("  %s - %d%% %s", format(L["SEASON"], seasonId["name"]) , math.ceil(quantity / reqQuantity * 10000) / 100, seasonId[faction] ))
 				end
 			end
 		end
